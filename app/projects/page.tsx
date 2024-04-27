@@ -1,11 +1,11 @@
 import Link from "next/link";
 import React from "react";
-import { allProjects } from "contentlayer/generated";
+import { allProjects, Project } from "contentlayer/generated";
 import { Navigation } from "../components/nav";
 import { Card } from "../components/card";
 import { Article } from "./article";
 import { Redis } from "@upstash/redis";
-import { Eye } from "lucide-react";
+import { Eye } from "lucide-react"
 
 const redis = Redis.fromEnv();
 
@@ -13,26 +13,26 @@ export const revalidate = 60;
 export default async function ProjectsPage() {
   const views = (
     await redis.mget<number[]>(
-      ...allProjects.map((p) => ["pageviews", "projects", p.slug].join(":")),
+      ...allProjects.map((p: Project) => ["pageviews", "projects", p.slug].join(":")),
     )
   ).reduce((acc, v, i) => {
     acc[allProjects[i].slug] = v ?? 0;
     return acc;
   }, {} as Record<string, number>);
 
-  const featured = allProjects.find((project) => project.slug === "unkey")!;
-  const top2 = allProjects.find((project) => project.slug === "planetfall")!;
-  const top3 = allProjects.find((project) => project.slug === "highstorm")!;
+  const featured = allProjects.find((project: Project) => project.slug === "unkey")!;
+  const top2 = allProjects.find((project: Project) => project.slug === "planetfall")!;
+  const top3 = allProjects.find((project: Project) => project.slug === "highstorm")!;
   const sorted = allProjects
-    .filter((p) => p.published)
+    .filter((p: Project) => p.published)
     .filter(
-      (project) =>
+      (project: Project) =>
         project.slug !== featured.slug &&
         project.slug !== top2.slug &&
         project.slug !== top3.slug,
     )
     .sort(
-      (a, b) =>
+      (a: Project, b: Project) =>
         new Date(b.date ?? Number.POSITIVE_INFINITY).getTime() -
         new Date(a.date ?? Number.POSITIVE_INFINITY).getTime(),
     );
@@ -106,8 +106,8 @@ export default async function ProjectsPage() {
         <div className="grid grid-cols-1 gap-4 mx-auto lg:mx-0 md:grid-cols-3">
           <div className="grid grid-cols-1 gap-4">
             {sorted
-              .filter((_, i) => i % 3 === 0)
-              .map((project) => (
+              .filter((_: Project, i: number) => i % 3 === 0)
+              .map((project: Project) => (
                 <Card key={project.slug}>
                   <Article project={project} views={views[project.slug] ?? 0} />
                 </Card>
@@ -115,8 +115,8 @@ export default async function ProjectsPage() {
           </div>
           <div className="grid grid-cols-1 gap-4">
             {sorted
-              .filter((_, i) => i % 3 === 1)
-              .map((project) => (
+              .filter((_: Project, i: number) => i % 3 === 1)
+              .map((project: Project) => (
                 <Card key={project.slug}>
                   <Article project={project} views={views[project.slug] ?? 0} />
                 </Card>
@@ -124,8 +124,8 @@ export default async function ProjectsPage() {
           </div>
           <div className="grid grid-cols-1 gap-4">
             {sorted
-              .filter((_, i) => i % 3 === 2)
-              .map((project) => (
+              .filter((_: Project, i: number) => i % 3 === 2)
+              .map((project: Project) => (
                 <Card key={project.slug}>
                   <Article project={project} views={views[project.slug] ?? 0} />
                 </Card>
